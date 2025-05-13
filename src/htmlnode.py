@@ -50,9 +50,11 @@ class ParentNode(HTMLNode):
         html = f"<{self.tag}"
         if self.props:
             for prop, value in self.props.items():
-                html += f" {prop}={value}"
+                html += f' {prop}="{value}"'
         html += ">"
         for child in self.children:
             html += child.to_html()
         html += f"</{self.tag}>"
         return html
+    
+
