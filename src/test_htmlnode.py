@@ -1,6 +1,7 @@
 import unittest
 
 from htmlnode import *
+from split_delimiter import *
 
 class TestHTMLNode(unittest.TestCase):
     def test_props_to_html(self):
@@ -165,4 +166,8 @@ class TestHTMLNode(unittest.TestCase):
         
 # DELIMITER TESTS #
 
-    
+    def test_multiple_delims(self):
+        node = TextNode("This has **bold**, and `code`.", TextType.TEXT)
+        step1 = split_nodes_delimiter([node], "**", TextType.BOLD)
+        step2 = split_nodes_delimiter(step1, "`", TextType.CODE)
+        
