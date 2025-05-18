@@ -170,4 +170,116 @@ class TestHTMLNode(unittest.TestCase):
         node = TextNode("This has **bold**, and `code`.", TextType.TEXT)
         step1 = split_nodes_delimiter([node], "**", TextType.BOLD)
         step2 = split_nodes_delimiter(step1, "`", TextType.CODE)
+        self.assertEqual(
+            step1,
+            [
+                TextNode("This has ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(", and `code`.", TextType.TEXT),
+            ]
+        )
         
+        self.assertEqual(
+            step2,
+            [
+                TextNode("This has ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(", and ", TextType.TEXT),
+                TextNode("code", TextType.CODE),
+                TextNode(".", TextType.TEXT)
+            ]
+        )
+        
+    
+    def test_italic_bold_delims(self):
+        node = TextNode("This is __italic__ and **bold** text.", TextType.TEXT)
+        step1 = split_nodes_delimiter([node], "__", TextType.ITALIC)
+        step2 = split_nodes_delimiter(step1, "**", TextType.BOLD)
+        self.assertEqual(
+            step1,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" and **bold** text.", TextType.TEXT)
+            ]
+        )
+        
+        self.assertEqual(
+            step2,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" text.", TextType.TEXT)
+            ]
+        )
+        
+    def test_three_delims(self):
+        node = TextNode("This is a __italic__ with **bold** also including `code` text.", TextType.TEXT)
+        step1 = split_nodes_delimiter([node], "__", TextType.ITALIC)
+        step2 = split_nodes_delimiter(step1, "**", TextType.BOLD)
+        step3 = split_nodes_delimiter(step2, "`", TextType.CODE)
+        self.assertEqual(
+            step1,
+            [
+                TextNode("This is a ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" with **bold** also including `code` text.", TextType.TEXT)
+            ]
+        )
+        
+        self.assertEqual(
+            step2,
+            [
+               TextNode("This is a ", TextType.TEXT),
+               TextNode("italic", TextType.ITALIC),
+               TextNode(" with ", TextType.TEXT),
+               TextNode("bold", TextType.BOLD),
+               TextNode(" also including `code` text.", TextType.TEXT)
+            ]
+        )
+        
+        self.assertEqual(
+            step3,
+            [
+                TextNode("This is a ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" with ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" also including ", TextType.TEXT),
+                TextNode("code", TextType.CODE),
+                TextNode(" text.", TextType.TEXT)
+            ]
+        )
+    
+    def test_no_closing_delims(self):
+        node = TextNode("This is a broken **bold", TextType.TEXT)
+        with self.assertRaises(ValueError):
+            split_nodes_delimiter([node], "**", TextType.BOLD)
+            
+    def test_same_multiple_delims(self):
+        node = TextNode("This is **multiple** types of **bold** characters", TextType.TEXT)
+        step1 = split_nodes_delimiter([node], "**", TextType.BOLD)
+        self.assertEqual(
+            step1,
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("multiple", TextType.BOLD),
+                TextNode(" types of ", TextType.TEXT),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" characters", TextType.TEXT)
+            ]
+        )
+        
+    def test_empty_delim(self):
+        node = TextNode("This is a **** empty bold", TextType.TEXT)
+        step1 = split_nodes_delimiter([node], "**", TextType.BOLD)
+        self.assertEqual(
+            step1,
+            [
+                TextNode("This is a ", TextType.TEXT),
+                TextNode("", TextType.BOLD),
+                TextNode(" empty bold", TextType.TEXT)
+            ]
+        )

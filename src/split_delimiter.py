@@ -30,8 +30,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
             # Add delimited text with special type
             delimited_text = curr_text[start_index + len(delimiter):end_index]
-            if delimited_text:
-                new_nodes.append(TextNode(delimited_text, text_type))
+            new_nodes.append(TextNode(delimited_text, text_type))
 
             # Update current text to what remains
             curr_text = curr_text[end_index + len(delimiter):]
