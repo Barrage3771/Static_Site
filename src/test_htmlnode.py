@@ -283,3 +283,8 @@ class TestHTMLNode(unittest.TestCase):
                 TextNode(" empty bold", TextType.TEXT)
             ]
         )
+
+
+    #RegEx tests
+
+    def empty_regex(self):
