@@ -287,4 +287,53 @@ class TestHTMLNode(unittest.TestCase):
 
     #RegEx tests
 
-    def empty_regex(self):
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is a text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+        )
+        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+        
+    def test_no_match_extract_markdown_image(self):
+        matches = extract_markdown_images(
+            "This is a text with no image or link"
+        )
+        self.assertListEqual([], matches)
+    
+    def test_multiple_matches_extract(self):
+        matches = extract_markdown_images(
+            "This is a text with ![image](https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg) and also this ![image](https://upload.wikimedia.org/wikipedia/commons/9/9e/Ours_brun_parcanimalierpyrenees_1.jpg)"
+        )
+        expected_matches = [
+            ("image", "https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg"),
+            ("image", "https://upload.wikimedia.org/wikipedia/commons/9/9e/Ours_brun_parcanimalierpyrenees_1.jpg")
+        ]
+        self.assertListEqual(expected_matches, matches)
+        
+    def test_mixed_content(self):
+        text_with_mixed_content = "This is text with ![image](https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg) also it has [link](https://www.example.com) with a ![picture](https://imgur.com/gallery/grenc-rKXI4zf#/t/goofy)"
+        match1 = extract_markdown_images(text_with_mixed_content)
+        match2 = extract_markdown_links(text_with_mixed_content)
+        
+        expected_matches1 = [
+            ("image", "https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg"),
+            ("picture", "https://imgur.com/gallery/grenc-rKXI4zf#/t/goofy")
+        ]
+        
+        expected_matches2 = [
+            ("link", "https://www.example.com")
+        ]
+        
+        self.assertListEqual(expected_matches1, match1)
+        self.assertListEqual(expected_matches2, match2)
+        
+    def test_edge_case_extract(self):
+        text_edge_case = "![image](https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg) this is a edge case test same with this ![image](https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg)"
+        
+        matches = extract_markdown_images(text_edge_case)
+        
+        expected_match = [
+            ("image", "https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg"),
+            ("image", "https://upload.wikimedia.org/wikipedia/commons/7/71/2010-kodiak-bear-1.jpg")
+        ]
+        
+        self.assertListEqual(expected_match, matches)
