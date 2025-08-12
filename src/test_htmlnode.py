@@ -337,3 +337,10 @@ class TestHTMLNode(unittest.TestCase):
         ]
         
         self.assertListEqual(expected_match, matches)
+        
+    def test_empty_alt_url(self):
+        text_empty = "This is text with empty alt and url ![]()"
+        
+        matches = extract_markdown_images(text_empty)
+        
+        self.assertListEqual([("", "")], matches)
