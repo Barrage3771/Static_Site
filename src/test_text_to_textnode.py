@@ -20,3 +20,27 @@ class TestTextNodeFunction(unittest.TestCase):
         text = "Plain text only, no markdown!"
         nodes = text_to_textnodes(text)
         assert nodes == [TextNode("Plain text only, no markdown!", TextType.TEXT)]
+
+    def test_only_image_and_links(self):
+        text = "![image](image.png) plus [boot](https://boot.dev)"
+        nodes = text_to_textnodes(text)
+        assert nodes == [
+            TextNode("image", TextType.IMAGE, "image.png"),
+            TextNode(" plus ", TextType.TEXT),
+            TextNode("boot", TextType.LINK, "https://boot.dev"),
+        ]
+
+    def test_consecutive_markdown(self):
+        text = "This is **bold****bold** text."
+        nodes = text_to_textnodes(text)
+        assert nodes == [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" text.", TextType.TEXT),
+        ]
+
+    def test_empty_text(self):
+        text = ""
+        nodes = text_to_textnodes(text)
+        assert nodes == []
