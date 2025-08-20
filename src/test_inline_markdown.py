@@ -58,3 +58,4 @@ class TestInlineMarkdown(unittest.TestCase):
             [TextNode("This is a text with no link at all.", TextType.TEXT)],
             new_nodes
         )
+        
