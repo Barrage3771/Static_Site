@@ -8,7 +8,9 @@ class TestTextNodeFunction(unittest.TestCase):
         assert nodes == [
             TextNode("Hello ", TextType.TEXT),
             TextNode("bold", TextType.BOLD),
-            TextNode(" and _italic_ plus ", TextType.TEXT),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" plus ", TextType.TEXT),
             TextNode("code", TextType.CODE),
             TextNode(" and ", TextType.TEXT),
             TextNode("alt", TextType.IMAGE, "image.png"),

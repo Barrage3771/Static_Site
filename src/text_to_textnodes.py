@@ -7,7 +7,9 @@ def text_to_textnodes(text):
     new_nodes = []
     delimiters = [
         ("**", TextType.BOLD),
-        ("__", TextType.ITALIC),
+        ("__", TextType.BOLD),
+        ("_", TextType.ITALIC),
+        ("*", TextType.ITALIC),
         ("`", TextType.CODE),
     ]
     node = TextNode(text, TextType.TEXT)
