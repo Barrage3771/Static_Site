@@ -1,9 +1,11 @@
 from textnode import *
+from copystatic import *
 
 def main():
 
-    node = TextNode("some text", TextType.LINK, "https://www.boot.dev")
-    print(node)
+    source_dir = "static"
+    dest_dir = "public"
 
-if __name__ == "__main__":
-    main()
+    copy_files_recursive(source_dir, dest_dir)
+
+main()
