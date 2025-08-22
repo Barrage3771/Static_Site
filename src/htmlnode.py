@@ -31,7 +31,11 @@ class LeafNode(HTMLNode):
 
     def to_html(self):
         if self.value is None or self.value == '':
-            raise ValueError("LeafNode must have value")
+            if self.tag in ["img", "br", "hr"]:
+                props_html = self.props_to_html()
+                return f"<{self.tag}{props_html} />"
+            else:
+                raise ValueError("LeafNode must have value")
         elif self.tag is None:
             return f"{self.value}"
 
@@ -71,7 +75,7 @@ def text_node_to_html_node(text_node):
     if text_node.text_type == TextType.LINK:
         return LeafNode("a", text_node.text, {"href": text_node.url})
     if text_node.text_type == TextType.IMAGE:
-        return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
+        return LeafNode("img", None, {"src": text_node.url, "alt": text_node.text})
 
 
 def extract_markdown_images(text):
