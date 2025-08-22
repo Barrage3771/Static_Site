@@ -31,7 +31,7 @@ def generate_page(from_path, template_path, dest_path):
     file3.close()
     
 
-def generate_pages_recursively(content_root, template_path, public_root, from_path=None, dest_path=None):
+def generate_pages_recursively(content_root, template_path, public_root, basepath, from_path=None, dest_path=None):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     
     if from_path is None:
@@ -48,7 +48,7 @@ def generate_pages_recursively(content_root, template_path, public_root, from_pa
             
             os.makedirs(dest_entry_path, exist_ok=True)
             
-            generate_pages_recursively(content_root, template_path, public_root, src_entry_path, dest_entry_path)
+            generate_pages_recursively(content_root, template_path, public_root, basepath, src_entry_path, dest_entry_path)
         elif os.path.isfile(src_entry_path) and src_entry_path.endswith(".md"):
             html_output_path = dest_entry_path.replace(".md", ".html")
             os.makedirs(os.path.dirname(html_output_path), exist_ok=True)
@@ -63,6 +63,8 @@ def generate_pages_recursively(content_root, template_path, public_root, from_pa
             
             output_html = template_html.replace("{{ Title }}", title)
             output_html = output_html.replace("{{ Content }}", html_code)
+            output_html = output_html.replace('href="/', 'href="' + basepath)
+            output_html = output_html.replace('src="/', 'src="' + basepath)
             
             with open(html_output_path, "w") as f:
                 f.write(output_html)
